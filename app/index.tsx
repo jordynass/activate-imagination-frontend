@@ -1,37 +1,62 @@
 import { useState } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, Button } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
+import { Text, View, TextInput } from '@/components/Themed';
 import CameraScreen from '@/components/CameraScreen';
 
 export default function StartGameWizard() {
+  const [storyPrompt, setStoryPrompt] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [stage, setStage] = useState(0);
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
-    setStage(stage + 1);
+  }
+
+  function startQuest() {
+    console.log("Starting Quest...");
   }
 
   function getScreen() {
     switch (stage) {
       case 0:
-        return <CameraScreen onTakePhoto={handleTakePhoto} />;
+        return (
+          <View key={stage}>
+            <Text>What are you doing on your quest?</Text>
+            <TextInput multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} />
+          </View>);
       case 1:
         return (
-          <View>
-            <Text>Photo taken!</Text>
+          <View key={stage}>
+            <Text>Show me your point of departure</Text>
+            <CameraScreen onTakePhoto={handleTakePhoto} />
+          </View>);
+      case 2:
+        return (
+          <View key={stage}>
+            <Text>If this is the quest you seek, continue... at your own risk!</Text>
+            <Text>"{storyPrompt}"</Text>
             <Image source={{uri: `data:image/jpeg;base64,${photoBase64}`}} style={styles.photo} />
-          </View>
-        );
+          </View>);
     }
   }
 
   return (
     <View style={styles.container}>
       {getScreen()}
+      <Button title="Back" disabled={stage === 0} onPress={() => setStage(stage - 1)} />
+      {stage < 2 ?
+        <Button title="Next" onPress={() => setStage(stage + 1)} /> :
+        <Button title="Start quest" onPress={startQuest} />}
     </View>
   );
+}
+
+function ConfirmationScreen({storyPrompt, photoBase64}: {storyPrompt: string, photoBase64: string}) {
+  const missing = [];
+  if (!storyPrompt) {
+    missing.push("story prompt");
+  }
 }
 
 const styles = StyleSheet.create({
