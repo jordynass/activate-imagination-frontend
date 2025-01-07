@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Button, StyleSheet, Image, Text, View } from 'react-native';
+import { Button, StyleSheet, Image } from 'react-native';
+
+import { Text, View } from '@/components/Themed';
 
 export default function TabOneScreen() {
   const [permission, requestPermission] = useCameraPermissions();
