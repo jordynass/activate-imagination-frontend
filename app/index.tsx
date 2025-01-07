@@ -1,49 +1,35 @@
-import { useRef, useState } from 'react';
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Button, StyleSheet, Image } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Image } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
+import CameraScreen from '@/components/CameraScreen';
 
-export default function TabOneScreen() {
-  const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = useRef<CameraView | null>(null);
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+export default function StartGameWizard() {
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
+  const [stage, setStage] = useState(0);
 
-  if (!permission) {
-    return <View />;
+  function handleTakePhoto(b64: string) {
+    setPhotoBase64(b64);
+    setStage(stage + 1);
   }
 
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
-  }
-
-  async function takePhoto() {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({
-        base64: true,
-        quality: 0.2,
-      });
-      if (photo?.base64) {
-        setPhotoBase64(photo.base64);
-        setPhotoUri(photo.uri);
-      }
+  function getScreen() {
+    switch (stage) {
+      case 0:
+        return <CameraScreen onTakePhoto={handleTakePhoto} />;
+      case 1:
+        return (
+          <View>
+            <Text>Photo taken!</Text>
+            <Image source={{uri: `data:image/jpeg;base64,${photoBase64}`}} style={styles.photo} />
+          </View>
+        );
     }
   }
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera}>
-        <View style={styles.buttonContainer}>
-          <Button title="Take Photo" onPress={takePhoto} />
-        </View>
-      </CameraView>
-      {photoUri && <Image source={{ uri: photoUri }} style={styles.photo} />}
+      {getScreen()}
     </View>
   );
 }
