@@ -3,11 +3,17 @@ import { StyleSheet, Image, Button } from 'react-native';
 
 import { Text, View, TextInput } from '@/components/Themed';
 import CameraScreen from '@/components/CameraScreen';
+import useStream from '@/components/useStream';
+import socket from '@/utils/network';
 
 export default function StartGameWizard() {
   const [storyPrompt, setStoryPrompt] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [stage, setStage] = useState(0);
+
+  // TODO: Move to next page
+  const stream = useStream();
+  console.log(stream.values);
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
@@ -15,6 +21,7 @@ export default function StartGameWizard() {
 
   function startQuest() {
     console.log("Starting Quest...");
+    socket.emit("newGame", {storyPrompt, photo: photoBase64});
   }
 
   function getScreen() {
@@ -32,6 +39,7 @@ export default function StartGameWizard() {
             <CameraScreen onTakePhoto={handleTakePhoto} />
           </View>);
       case 2:
+        // TODO: Replace with ConfirmationScreen to handle missing data.
         return (
           <View key={stage}>
             <Text>If this is the quest you seek, continue... at your own risk!</Text>
@@ -45,6 +53,7 @@ export default function StartGameWizard() {
     <View style={styles.container}>
       {getScreen()}
       <Button title="Back" disabled={stage === 0} onPress={() => setStage(stage - 1)} />
+      {/* TODO: Disable "Next" button if no storyPrompt or photoBase64 is set (depending on the stage). */}
       {stage < 2 ?
         <Button title="Next" onPress={() => setStage(stage + 1)} /> :
         <Button title="Start quest" onPress={startQuest} />}
