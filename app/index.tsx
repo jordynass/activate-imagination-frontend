@@ -3,17 +3,14 @@ import { StyleSheet, Image, Button } from 'react-native';
 
 import { Text, View, TextInput } from '@/components/Themed';
 import CameraScreen from '@/components/CameraScreen';
-import useStream from '@/components/useStream';
 import socket from '@/utils/network';
+import { useRouter } from 'expo-router';
 
-export default function StartGameWizard() {
+export default function StartScreen() {
   const [storyPrompt, setStoryPrompt] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [stage, setStage] = useState(0);
-
-  // TODO: Move to next page
-  const stream = useStream();
-  console.log(stream.values);
+  const router = useRouter();
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
@@ -22,6 +19,7 @@ export default function StartGameWizard() {
   function startQuest() {
     console.log("Starting Quest...");
     socket.emit("newGame", {storyPrompt, photo: photoBase64});
+    router.push('/log-screen');
   }
 
   function getScreen() {
