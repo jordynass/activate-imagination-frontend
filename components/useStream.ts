@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import socket from "@/utils/network";
+import { useRealTimeState } from "./useRealTimeState";
 
 type Emission = {
   order: number,
@@ -9,21 +10,17 @@ type Emission = {
 function useStream() {
   const [allEmissions, setAllEmissions] = useState(new Map<number, Emission>());
   const [capacity, setCapacity] = useState(Infinity);
-  const isActiveRef = useRef(false);
+  const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
 
   useEffect(() => {
     function addEmission(emission: Emission) {
       setAllEmissions(prevEmissions => {
-        if (!isActiveRef.current) {
-          isActiveRef.current = true;;
+        if (!getIsActiveNow()) {
+          setIsActive(true);
           return new Map<number, Emission>([[emission.order, emission]]);
         }
         const newEmissions = new Map(prevEmissions);
         newEmissions.set(emission.order, emission);
-        if (allEmissions.size === capacity) {
-          isActiveRef.current = false;
-          setCapacity(Infinity);
-        }
         return newEmissions;
       });
     }
@@ -36,7 +33,14 @@ function useStream() {
       socket.off("output", addEmission);
       socket.off("endOutput", handleEndOutput);
     }
-  }, [setAllEmissions, setCapacity, isActiveRef]);
+  }, [setAllEmissions, setCapacity, getIsActiveNow, setIsActive]);
+
+  useEffect(() => {
+    if (allEmissions.size === capacity) {
+      setIsActive(false);
+      setCapacity(Infinity);
+    }
+  }, [allEmissions, capacity, setIsActive, setCapacity])
 
   const values: string[] = [];
   for (let i = 0; i < allEmissions.size; i++) {
@@ -48,7 +52,7 @@ function useStream() {
     }
   }
   
-  return {values, isActive: isActiveRef.current};
+  return {values, isActive};
 }
 
 export default useStream;
