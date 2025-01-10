@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import HeroLogScreen, { ACTION_INPUT_PLACEHOLDER } from './hero-log-screen'; // Adjust the path as needed
+import HeroLogScreen, { ACTION_INPUT_PLACEHOLDER } from '../hero-log-screen'; // Adjust the path as needed
 import useStream from '@/hooks/useStream';
 import socket from '@/utils/network';
 
