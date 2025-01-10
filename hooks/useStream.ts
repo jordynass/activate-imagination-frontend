@@ -1,52 +1,52 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import socket from "@/utils/network";
 import { useRealTimeState } from "./useRealTimeState";
 
-type Emission = {
+type Chunk = {
   order: number,
   content: string,
 }
 
 function useStream() {
-  const [allEmissions, setAllEmissions] = useState(new Map<number, Emission>());
+  const [allChunks, setAllChunks] = useState(new Map<number, Chunk>());
   const [capacity, setCapacity] = useState(Infinity);
   const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
 
   useEffect(() => {
-    function addEmission(emission: Emission) {
-      setAllEmissions(prevEmissions => {
+    function addChunk(chunk: Chunk) {
+      setAllChunks(prevChunks => {
         if (!getIsActiveNow()) {
           setIsActive(true);
-          return new Map<number, Emission>([[emission.order, emission]]);
+          return new Map<number, Chunk>([[chunk.order, chunk]]);
         }
-        const newEmissions = new Map(prevEmissions);
-        newEmissions.set(emission.order, emission);
-        return newEmissions;
+        const newChunks = new Map(prevChunks);
+        newChunks.set(chunk.order, chunk);
+        return newChunks;
       });
     }
     const handleEndOutput = (cap: number) => setCapacity(cap);
     
-    socket.on("output", addEmission);
+    socket.on("output", addChunk);
     socket.on("endOutput", handleEndOutput);
 
     return () => {
-      socket.off("output", addEmission);
+      socket.off("output", addChunk);
       socket.off("endOutput", handleEndOutput);
     }
-  }, [setAllEmissions, setCapacity, getIsActiveNow, setIsActive]);
+  }, [setAllChunks, setCapacity, getIsActiveNow, setIsActive]);
 
   useEffect(() => {
-    if (allEmissions.size === capacity) {
+    if (allChunks.size === capacity) {
       setIsActive(false);
       setCapacity(Infinity);
     }
-  }, [allEmissions, capacity, setIsActive, setCapacity])
+  }, [allChunks, capacity, setIsActive, setCapacity])
 
   const values: string[] = [];
-  for (let i = 0; i < allEmissions.size; i++) {
-    const nextEmission = allEmissions.get(i);
-    if (nextEmission) {
-      values.push(nextEmission.content);
+  for (let i = 0; i < allChunks.size; i++) {
+    const nextChunk = allChunks.get(i);
+    if (nextChunk) {
+      values.push(nextChunk.content);
     } else {
       break;
     }
