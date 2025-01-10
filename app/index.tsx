@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, Image, Button } from 'react-native';
 
 import { Text, View, TextInput } from '@/components/Themed';
-import CameraScreen from '@/components/Camera';
+import Camera from '@/components/Camera';
 import socket from '@/utils/network';
 import { useRouter } from 'expo-router';
 
@@ -34,7 +34,7 @@ export default function StartScreen() {
         return (
           <View key={stage}>
             <Text>Show me your point of departure</Text>
-            <CameraScreen onTakePhoto={handleTakePhoto} />
+            <Camera onTakePhoto={handleTakePhoto} />
           </View>);
       case 2:
         // TODO: Replace with ConfirmationScreen to handle missing data.
