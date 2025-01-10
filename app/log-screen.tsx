@@ -1,5 +1,5 @@
 import { Text, TextInput, View } from "@/components/Themed";
-import useStream from "@/components/useStream";
+import useStream from "@/hooks/useStream";
 import socket from "@/utils/network";
 import { useState } from "react";
 import { Button, StyleSheet } from "react-native";

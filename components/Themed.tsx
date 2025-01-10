@@ -6,7 +6,7 @@
 import { Text as DefaultText, View as DefaultView, TextInput as DefaultTextInput } from 'react-native';
 
 import Colors from '@/constants/Colors';
-import { useColorScheme } from './useColorScheme';
+import { useColorScheme } from '../hooks/boilerplate/useColorScheme';
 
 type ThemeProps = {
   lightColor?: string;
