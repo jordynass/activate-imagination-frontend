@@ -4,6 +4,8 @@ import socket from "@/utils/network";
 import { useEffect, useState } from "react";
 import { Button, StyleSheet, ActivityIndicator } from "react-native";
 
+export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...'
+
 export default function HeroLogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
   const {values, isActive} = useStream();
@@ -12,7 +14,7 @@ export default function HeroLogScreen() {
     if (isActive) {
       setIsWaiting(false);
     }
-  })
+  }, [isActive]);
 
   const content = values.join('');
 
@@ -26,11 +28,11 @@ export default function HeroLogScreen() {
       <Text>{content}</Text>
       {(!isActive && !isWaiting && content) && (
         <View>
-          <TextInput multiline={true} value={heroResponse} onChangeText={setHeroResponse} />
+          <TextInput placeholder={ACTION_INPUT_PLACEHOLDER} multiline={true} value={heroResponse} onChangeText={setHeroResponse} />
           <Button title="Take Action" onPress={handleAction} />
         </View>
       )}
-      {isWaiting && <ActivityIndicator size="large" />}
+      {isWaiting && <ActivityIndicator testID="activity-indicator" size="large" />}
     </View>
   )
 }
