@@ -1,28 +1,36 @@
 import { Text, TextInput, View } from "@/components/Themed";
 import useStream from "@/hooks/useStream";
 import socket from "@/utils/network";
-import { useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { useEffect, useState } from "react";
+import { Button, StyleSheet, ActivityIndicator } from "react-native";
 
 export default function LogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
-  const stream = useStream();
+  const {values, isActive} = useStream();
+  const [isWaiting, setIsWaiting] = useState(false);
+  useEffect(() => {
+    if (isActive) {
+      setIsWaiting(false);
+    }
+  })
 
-  const content = stream.values.join('');
+  const content = values.join('');
 
   function handleAction() {
+    setIsWaiting(true);
     socket.emit('action', heroResponse);
   }
 
   return (
     <View style={styles.container}>
       <Text>{content}</Text>
-      {(!stream.isActive && content) && (
+      {(!isActive && !isWaiting && content) && (
         <View>
           <TextInput multiline={true} value={heroResponse} onChangeText={setHeroResponse} />
           <Button title="Take Action" onPress={handleAction} />
         </View>
       )}
+      {isWaiting && <ActivityIndicator size="large" />}
     </View>
   )
 }
