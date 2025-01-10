@@ -4,7 +4,7 @@ import socket from "@/utils/network";
 import { useEffect, useState } from "react";
 import { Button, StyleSheet, ActivityIndicator } from "react-native";
 
-export default function LogScreen() {
+export default function HeroLogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
   const {values, isActive} = useStream();
   const [isWaiting, setIsWaiting] = useState(false);

@@ -8,7 +8,7 @@ type Props = {
   onTakePhoto: (photoBase64: string) => void;
 }
 
-export default function CameraScreen({onTakePhoto}: Props) {
+export default function Camera({onTakePhoto}: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
 

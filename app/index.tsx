@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, Image, Button } from 'react-native';
 
 import { Text, View, TextInput } from '@/components/Themed';
-import CameraScreen from '@/components/CameraScreen';
+import CameraScreen from '@/components/Camera';
 import socket from '@/utils/network';
 import { useRouter } from 'expo-router';
 
@@ -19,7 +19,7 @@ export default function StartScreen() {
   function startQuest() {
     console.log("Starting Quest...");
     socket.emit("newGame", {storyPrompt, photo: photoBase64});
-    router.push('/log-screen');
+    router.push('/hero-log-screen');
   }
 
   function getScreen() {
