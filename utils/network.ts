@@ -1,7 +1,8 @@
 import { io } from "socket.io-client";
 
 export function getWebSocketUrl() {
-  // TODO: Handle environments
+  // TODO: Move to a .env variable using expo-constants
+  // and include non-local environments.
   return "ws://192.168.1.194:3000";
 }
 
