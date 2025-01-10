@@ -6,6 +6,12 @@ import Camera from '@/components/Camera';
 import socket from '@/utils/network';
 import { useRouter } from 'expo-router';
 
+export const STORY_PROMPT = 'What are you doing on your quest?';
+export const PHOTO_PROMPT = 'Show me your point of departure';
+export const CONFIRMATION_PROMPT = 'If this is the quest you seek, continue... at your own risk!';
+
+export const STORY_PLACEHOLDER = 'I am the swashbuckling captain of the SS Loopadoop searching for the lost jewels of La Joya';
+
 export default function StartScreen() {
   const [storyPrompt, setStoryPrompt] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
@@ -27,13 +33,13 @@ export default function StartScreen() {
       case 0:
         return (
           <View key={stage}>
-            <Text>What are you doing on your quest?</Text>
-            <TextInput multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} />
+            <Text>{STORY_PROMPT}</Text>
+            <TextInput multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} placeholder={STORY_PLACEHOLDER}/>
           </View>);
       case 1:
         return (
           <View key={stage}>
-            <Text>Show me your point of departure</Text>
+            <Text>{PHOTO_PROMPT}</Text>
             <Camera onTakePhoto={handleTakePhoto} />
           </View>);
       case 2:
