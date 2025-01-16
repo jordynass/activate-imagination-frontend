@@ -1,14 +1,13 @@
 import { Text, TextInput, View } from "@/components/Themed";
-import useStream from "@/hooks/useStream";
-import socket from "@/utils/network";
-import { useEffect, useState } from "react";
+import IOInterfaceContext from "@/contexts/IOInterfaceContext";
+import { useEffect, useState, useContext } from "react";
 import { Button, StyleSheet, ActivityIndicator } from "react-native";
 
 export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...'
 
 export default function HeroLogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
-  const {values, isActive} = useStream();
+  const {stream: {values, isActive}, emit} = useContext(IOInterfaceContext)!;
   const [isWaiting, setIsWaiting] = useState(false);
   useEffect(() => {
     if (isActive) {
@@ -20,7 +19,7 @@ export default function HeroLogScreen() {
 
   function handleAction() {
     setIsWaiting(true);
-    socket.emit('action', heroResponse);
+    emit('action', {text: heroResponse});
   }
 
   return (

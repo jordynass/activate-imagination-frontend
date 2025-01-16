@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/boilerplate/useColorScheme';
+import IOInterfaceProvider from '@/components/IOProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,10 +46,12 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="hero-log-screen" options={{ headerShown: false }} />
-      </Stack>
+      <IOInterfaceProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="hero-log-screen" options={{ headerShown: false }} />
+        </Stack>
+      </IOInterfaceProvider>
     </ThemeProvider>
   );
 }

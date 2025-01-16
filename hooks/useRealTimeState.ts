@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 
 /**
  * Provides a real time value like useRef so it can be effectively used in async callbacks,
@@ -10,13 +10,14 @@ import { useRef, useState } from "react";
 export function useRealTimeState<T>(initialValue: T): [T, (value: T) => void, () => T] {
   const [field, setField] = useState(initialValue);
   const fieldRef = useRef(initialValue);
+  const setRealTimeField = useCallback((value: T) => {
+    fieldRef.current = value;
+    setField(value)
+  }, [fieldRef, setField]);
   
   return [
     field,
-    (value: T) => {
-      fieldRef.current = value;
-      setField(value)
-    },
+    setRealTimeField,
     () => fieldRef.current,
   ];
 }

@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { StyleSheet, Image, Button } from 'react-native';
 
 import { Text, View, TextInput } from '@/components/Themed';
 import Camera from '@/components/Camera';
-import socket from '@/utils/network';
 import { useRouter } from 'expo-router';
+import IOInterfaceContext from '@/contexts/IOInterfaceContext';
 
 export const STORY_PROMPT = 'What are you doing on your quest?';
 export const PHOTO_PROMPT = 'Show me your point of departure';
@@ -17,6 +17,7 @@ export default function StartScreen() {
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [stage, setStage] = useState(0);
   const router = useRouter();
+  const { emit } = useContext(IOInterfaceContext)!;
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
@@ -24,7 +25,7 @@ export default function StartScreen() {
 
   function startQuest() {
     console.log("Starting Quest...");
-    socket.emit("newGame", {storyPrompt, photo: photoBase64});
+    emit("newGame", {storyPrompt, photo: photoBase64});
     router.push('/hero-log-screen');
   }
 
