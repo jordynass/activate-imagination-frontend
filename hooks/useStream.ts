@@ -10,12 +10,6 @@ type Chunk = {
   content: string,
 }
 
-/*
-TODO
--FIX THIS WEIRD CRASH AROUND NANOID (VERY CONFUSING). GOING TO REBUILD AND REINSTALL AND SEE HOW IT GOES.
--MANUAL TEST WITH ACTUAL SERVER
-jjjj
-*/
 function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   const [allChunks, setAllChunks] = useState(new Map<number, Chunk>());
   const [capacity, setCapacity] = useState(Infinity);
