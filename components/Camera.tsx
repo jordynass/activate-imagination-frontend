@@ -1,28 +1,22 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { Button, StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
+import { View } from '@/components/Themed'
+
+import { Text, Button, Card } from 'react-native-paper';
 
 type Props = {
+  headerText: string,
   onTakePhoto: (photoBase64: string) => void;
 }
 
-export default function Camera({onTakePhoto}: Props) {
+export default function Camera({onTakePhoto, headerText}: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
 
   if (!permission) {
     return <View />;
-  }
-
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
   }
 
   async function takePhoto() {
@@ -38,41 +32,45 @@ export default function Camera({onTakePhoto}: Props) {
   }
 
   return (
-    <CameraView ref={cameraRef} style={styles.camera}>
-      <View style={styles.buttonContainer}>
-        <Button title="Take Photo" onPress={takePhoto} />
-      </View>
-    </CameraView>
+    <Card>
+      <Card.Content style={styles.content}>
+        <Text>{headerText}</Text>
+        {permission.granted ?
+            <CameraView ref={cameraRef} style={styles.camera} /> :
+            <Text style={styles.camera}>We need your permission to show the camera</Text>}
+      </Card.Content>
+      <Card.Actions style={styles.actions}>
+        {permission.granted ?
+            <Button onPress={takePhoto}>Take Photo</Button> :
+            <Button onPress={requestPermission}>Grant Permission</Button>}
+      </Card.Actions>
+    </Card>
   );
 }
 
+const CAMERA_WINDOW = 300;
+const CAMERA_TOP_MARGIN = 15;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  camera: {
+    width: CAMERA_WINDOW,
+    height: CAMERA_WINDOW,
+    marginTop: CAMERA_TOP_MARGIN,
+  },
+  permissionRequest: {
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    width: CAMERA_WINDOW,
+    height: CAMERA_WINDOW,
+    marginTop: CAMERA_TOP_MARGIN,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  content: {
+    alignSelf: 'center',
+    alignItems: 'center',
   },
-  camera: {
-    width: 300,
-    height: 300,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  message: {
-    fontSize: 16,
-  },
-  photo: {
-    width: 300,
-    height: 300,
-    marginTop: 20,
+  actions: {
+    alignSelf: 'center',
+    alignItems: 'center',
   },
 });
