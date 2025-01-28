@@ -20,7 +20,10 @@
     "moduleDirectories": [
       "node_modules"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",

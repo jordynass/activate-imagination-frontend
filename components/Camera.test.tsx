@@ -5,7 +5,7 @@ jest.mock('expo-camera', () => ({
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import Camera from './Camera'; // Adjust the path as needed
+import Camera from './Camera';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 const mockRequestPermission = jest.fn();
@@ -15,12 +15,26 @@ describe('Camera', () => {
     jest.clearAllMocks();
   });
 
+  it('renders header text if permission is not granted', () => {
+    (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: false }, mockRequestPermission ]);
+
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
+    expect(getByText('Some header')).toBeTruthy();
+  });
+
+  it('renders header text if permission is granted', () => {
+    (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: true }, mockRequestPermission ]);
+
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
+    expect(getByText('Some header')).toBeTruthy();
+  });
+
   it('renders permission request button if permission is not granted', () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: false }, mockRequestPermission ]);
 
-    const { getByText } = render(<Camera onTakePhoto={jest.fn()} />);
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
     expect(getByText('We need your permission to show the camera')).toBeTruthy();
-    const button = getByText('grant permission');
+    const button = getByText('Grant Permission');
     fireEvent.press(button);
     expect(mockRequestPermission).toHaveBeenCalled();
   });
@@ -28,8 +42,8 @@ describe('Camera', () => {
   it('requests permission on "grant permission" button press', () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: false }, mockRequestPermission ]);
 
-    const { getByText } = render(<Camera onTakePhoto={jest.fn()} />);
-    const button = getByText('grant permission');
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
+    const button = getByText('Grant Permission');
     fireEvent.press(button);
     expect(mockRequestPermission).toHaveBeenCalled();
   });
@@ -37,7 +51,7 @@ describe('Camera', () => {
   it('renders CameraView when permission is granted', () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: true }, mockRequestPermission ]);
 
-    const { getByText } = render(<Camera onTakePhoto={jest.fn()} />);
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
     expect(CameraView).toHaveBeenCalled();
     expect(getByText('Take Photo')).toBeTruthy();
   });
@@ -50,7 +64,7 @@ describe('Camera', () => {
     
     jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockCameraView });
 
-    const { getByText } = render(<Camera onTakePhoto={onTakePhoto} />);
+    const { getByText } = render(<Camera headerText="Some header" onTakePhoto={onTakePhoto} />);
     fireEvent.press(getByText('Take Photo'));
 
     await waitFor(() => {
