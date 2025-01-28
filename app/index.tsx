@@ -49,8 +49,7 @@ export default function StartScreen() {
           </Card.Actions>
         </Card>
         <Camera headerText={PHOTO_PROMPT} onTakePhoto={handleTakePhoto} />
-        <View style={styles.gap} />
-        <Button mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
+        <Button style={styles.flexEnd} mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
       </>) : (<>
         <Card>
           <Card.Content style={{alignSelf: 'center'}}>
@@ -75,16 +74,14 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    margin: '10%',
+    padding: '10%',
     gap: '2%',
+    backgroundColor: 'none',
   },
   photo: {
     width: 300,
     height: 300,
     marginTop: 20,
-  },
-  gap: {
-    flex: 1,
   },
   actions: {
     alignSelf: 'center',
@@ -99,5 +96,8 @@ const styles = StyleSheet.create({
   divider: {
     marginTop: 15,
     marginBottom: 15,
-  }
+  },
+  flexEnd: {
+    marginTop: 'auto',
+  },
 });
