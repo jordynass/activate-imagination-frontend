@@ -21,7 +21,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf'),
+    IMFellDWPica: require('@/assets/fonts/IMFellDWPica-Regular.ttf'),
     ...FontAwesome.font,
   });
 
@@ -56,11 +57,27 @@ function RootLayoutNav() {
         <ThemeProvider value={navigationTheme}>
           <IOInterfaceProvider>
             <Stack screenOptions={{
-                contentStyle: { backgroundColor: 'transparent' },
+                headerTitleAlign: 'center',
+                headerShadowVisible: false,
+                headerBackVisible: false,
+                gestureEnabled: false,
+                headerLeft: () => null,
+                headerStyle: {
+                  backgroundColor: 'transparent',
+                },
+                headerTitleStyle: {
+                  fontFamily: 'IMFellDWPica',
+                  fontSize: 24,
+                },
+                contentStyle: {
+                  backgroundColor: 'transparent',
+                  padding: '5%',
+                  paddingTop: 0,
+                },
                 animation: 'none', // Prevents white flash during navigation
             }}>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen name="hero-log-screen" options={{ headerShown: false }} />
+              <Stack.Screen name="index" options={{ title: 'Welcome to the Hunt' }} />
+              <Stack.Screen name="hero-log-screen" options={{ title: "Hero's Log" }} />
             </Stack>
           </IOInterfaceProvider>
         </ThemeProvider>

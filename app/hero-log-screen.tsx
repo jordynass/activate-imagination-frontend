@@ -1,7 +1,8 @@
-import { Text, TextInput, View } from "@/components/Themed";
+import { View } from "@/components/Themed";
 import IOInterfaceContext from "@/contexts/IOInterfaceContext";
 import { useEffect, useState, useContext } from "react";
-import { Button, StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
+import { Button, Text, Card, TextInput } from "react-native-paper";
 
 export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...'
 
@@ -24,14 +25,22 @@ export default function HeroLogScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>{content}</Text>
-      {(!isActive && !isWaiting && content) && (
-        <View>
-          <TextInput placeholder={ACTION_INPUT_PLACEHOLDER} multiline={true} value={heroResponse} onChangeText={setHeroResponse} />
-          <Button title="Take Action" onPress={handleAction} />
-        </View>
-      )}
-      {isWaiting && <ActivityIndicator testID="activity-indicator" size="large" />}
+      <Card>
+        <Card.Content style={styles.center}>
+          <Text>{content}</Text>
+        </Card.Content>
+        {(!isActive && !isWaiting && content) && (<Card.Actions style={styles.actions}>
+          <TextInput
+              style={styles.textInput}
+              contentStyle={styles.textInputContent}
+              multiline={true}
+              value={heroResponse}
+              onChangeText={setHeroResponse}
+              placeholder={ACTION_INPUT_PLACEHOLDER}/>
+          <Button onPress={handleAction}>Take Action</Button>
+        </Card.Actions>)}
+        {isWaiting && <ActivityIndicator testID="activity-indicator" size="large" />}
+      </Card>
     </View>
   )
 }
@@ -39,7 +48,24 @@ export default function HeroLogScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'stretch',
+    backgroundColor: 'none',
+  },
+  center: {
+    alignSelf: 'center',
+  },
+  actions: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'stretch',
+    gap: 10,
+  },
+  textInputContent: {
+    paddingBottom: 5,
+    paddingTop: 5,
+    flexShrink: 0,
+  },
+  textInput: {
+    alignSelf: 'stretch',
   },
 });

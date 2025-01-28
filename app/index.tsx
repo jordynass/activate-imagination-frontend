@@ -45,13 +45,12 @@ export default function StartScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome to the Hunt</Text>
       {stage === 'INPUT' ? (<>
         <Card>
-          <Card.Content style={styles.actions}>
+          <Card.Content style={styles.center}>
             <Text>{STORY_PROMPT}</Text>
           </Card.Content>
-          <Card.Actions style={styles.actions}>
+          <Card.Actions style={styles.center}>
             <TextInput style={styles.textInput} contentStyle={styles.textInputContent} multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} placeholder={STORY_PLACEHOLDER}/>
           </Card.Actions>
         </Card>
@@ -59,13 +58,13 @@ export default function StartScreen() {
         <Button style={styles.flexEnd} mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
       </>) : (<>
         <Card>
-          <Card.Content style={{alignSelf: 'center'}}>
+          <Card.Content style={styles.center}>
             <Text>{CONFIRMATION_PROMPT}</Text>
             <Divider style={styles.divider} />
             <Text style={{ fontStyle: 'italic' }}>"{storyPrompt}"</Text>
             <Image source={{uri: `data:image/jpeg;base64,${photoBase64}`}} style={styles.photo} />
           </Card.Content>
-          <Card.Actions style={styles.actions}>
+          <Card.Actions style={styles.center}>
             <Button mode="outlined" onPress={() => setStage('INPUT')}>Change</Button>
             <Button mode="contained" onPress={startQuest}>Start Quest</Button>
           </Card.Actions>
@@ -81,12 +80,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    padding: '5%',
     gap: '2%',
     backgroundColor: 'none',
   },
   header: {
-    backgroundColor: 'transparent',
     fontFamily: 'IMFellDWPica',
     textAlign: 'center',
     fontSize: 24
@@ -96,7 +93,7 @@ const styles = StyleSheet.create({
     height: 300,
     marginTop: 20,
   },
-  actions: {
+  center: {
     alignSelf: 'center',
   },
   textInputContent: {
