@@ -6,7 +6,8 @@ import Camera from '@/components/Camera';
 import { useRouter } from 'expo-router';
 import IOInterfaceContext from '@/contexts/IOInterfaceContext';
 
-import { Card, Text, TextInput, Button, Banner, Divider } from 'react-native-paper';
+import { Card, Text, TextInput, Button, Divider } from 'react-native-paper';
+import { useFonts } from 'expo-font';
 
 
 export const STORY_PROMPT = `Welcome to a quest where the only limit is your imagination!
@@ -26,6 +27,11 @@ export default function StartScreen() {
   const [stage, setStage] = useState<'INPUT'|'CONFIRM'>('INPUT');
   const router = useRouter();
   const { emit } = useContext(IOInterfaceContext)!;
+  const [loaded] = useFonts({
+    'IMFellDWPica': {
+      uri: 'https://fonts.gstatic.com/s/imfelldwpica/v16/2sDGZGRQotv9nbn2qSl0TxXVYNw9ZA.ttf'
+    }
+  });
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
@@ -39,6 +45,7 @@ export default function StartScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Welcome to the Hunt</Text>
       {stage === 'INPUT' ? (<>
         <Card>
           <Card.Content style={styles.actions}>
@@ -74,9 +81,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    padding: '10%',
+    padding: '5%',
     gap: '2%',
     backgroundColor: 'none',
+  },
+  header: {
+    backgroundColor: 'transparent',
+    fontFamily: 'IMFellDWPica',
+    textAlign: 'center',
+    fontSize: 24
   },
   photo: {
     width: 300,
