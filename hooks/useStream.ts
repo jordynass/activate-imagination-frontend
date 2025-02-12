@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useId } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRealTimeState } from "./useRealTimeState";
 import { Socket } from "socket.io-client";
 import { type IOInterface } from "@/contexts/IOInterfaceContext";
@@ -71,8 +71,5 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   
   return {stream: {values, isActive}, emit};
 }
-
-const LOCAL_WEBSOCKET = "ws://192.168.1.194:3000";
-// const LIVE_WEBSOCKET = "https://activate-imagination-backend-605301331241.us-central1.run.app";
 
 export default useStream;
