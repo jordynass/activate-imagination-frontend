@@ -10,6 +10,7 @@ export const getSocket: SocketFactory = (gameId: string) =>
   });
 
 enum BackendEndpoint {
-  LOCAL = "ws://192.168.1.194:3000",
+  LOCAL_WIFI = "ws://192.168.1.194:3000",
+  LOCAL_ETHERNET = "ws://192.168.1.125:3000",
   CLOUD = "https://activate-imagination-backend-605301331241.us-central1.run.app",
 }

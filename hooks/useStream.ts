@@ -54,7 +54,7 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
 
   function emit(event: string, payload: Record<string, any>) {
     if (!socket.current) {
-      console.log('Socket has not yet been defined so emission failed')
+      console.log('Socket has not yet been defined so emission failed');
     }
     socket.current?.emit(event, {...payload, gameId});
   };

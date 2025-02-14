@@ -27,7 +27,7 @@ export default function StartScreen() {
   const [stage, setStage] = useState<'INPUT'|'CONFIRM'>('INPUT');
   const router = useRouter();
   const { emit } = useContext(IOInterfaceContext)!;
-  const [loaded] = useFonts({
+  useFonts({
     'IMFellDWPica': {
       uri: 'https://fonts.gstatic.com/s/imfelldwpica/v16/2sDGZGRQotv9nbn2qSl0TxXVYNw9ZA.ttf'
     }
