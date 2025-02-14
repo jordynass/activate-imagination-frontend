@@ -5,9 +5,14 @@ import { type IOInterface } from "@/contexts/IOInterfaceContext";
 import { getSocket, SocketFactory } from "@/utils/SocketFactory";
 import { useGameId } from "./useGameId";
 
-type Chunk = {
-  order: number,
-  content: string,
+interface Chunk {
+  order: number;
+  content: string;
+}
+
+interface SocketEventListener<Payload> {
+  event: string;
+  callback: (payload: Payload) => void;
 }
 
 function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
@@ -16,6 +21,7 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
   const gameId = useGameId();
   const socket = useRef<Socket>();
+  const socketEventListeners = useRef<SocketEventListener<any>[]>([]);
 
   useEffect(() => {
     socket.current = socketFactory(gameId);
@@ -40,6 +46,9 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
       socket.current?.off("output", addChunk);
       socket.current?.off("endOutput", handleEndOutput);
       socket.current?.disconnect();
+      for (const {event, callback} of socketEventListeners.current) {
+        socket.current?.off(event, callback);
+      }
     }
     // TODO: Switch the last value of getRealTimeState to a ref or useCallback and add isActiveRef or
     // getIsActiveNow (resp) to the dep list.
@@ -52,6 +61,19 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
     }
   }, [allChunks, capacity, setIsActive, setCapacity]);
 
+  /**
+   * Example usage:
+   * listenFor('drive', (hopOns: Person[]) => stairCar.getSomeHopOns(hopOns));
+   */
+  function listenFor<Payload>(event: string, callback: (payload: Payload) => void) {
+    socket.current?.on(event, callback);
+    socketEventListeners.current.push({event, callback})
+  }
+
+  /**
+   * Example usage:
+   * listenFor('sale', {amount: 50, location: 'Banana Stand'});
+   */
   function emit(event: string, payload: Record<string, any>) {
     if (!socket.current) {
       console.log('Socket has not yet been defined so emission failed');
@@ -69,7 +91,7 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
     }
   }
   
-  return {stream: {values, isActive}, emit};
+  return {stream: {values, isActive}, emit, listenFor};
 }
 
 export default useStream;
