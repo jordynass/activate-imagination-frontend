@@ -1,3 +1,4 @@
+import ScreenView from "@/components/ScreenView";
 import { View } from "@/components/Themed";
 import IOInterfaceContext from "@/contexts/IOInterfaceContext";
 import { useRouter } from "expo-router";
@@ -31,7 +32,7 @@ export default function HeroLogScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenView>
       <Card>
         <Card.Content style={styles.center}>
           <Text>{content}</Text>
@@ -48,16 +49,11 @@ export default function HeroLogScreen() {
         </Card.Actions>)}
         {isWaiting && <ActivityIndicator testID="activity-indicator" size="large" />}
       </Card>
-    </View>
+    </ScreenView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    backgroundColor: 'none',
-  },
   center: {
     alignSelf: 'center',
   },

@@ -5,11 +5,12 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { View } from "@/components/Themed";
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/boilerplate/useColorScheme';
 import IOInterfaceProvider from '@/components/IOProvider';
-import { ImageBackground, StyleSheet } from 'react-native';
+import { ImageBackground, KeyboardAvoidingView, Platform, StatusBar, StyleSheet } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -52,38 +53,42 @@ function RootLayoutNav() {
   const navigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
-    <ImageBackground style={styles.background} source={require('@/assets/images/old_paper.jpg')}>
-      <PaperProvider theme={paperTheme}>
-        <ThemeProvider value={navigationTheme}>
-          <IOInterfaceProvider>
-            <Stack screenOptions={{
-                headerTitleAlign: 'center',
-                headerShadowVisible: false,
-                headerBackVisible: false,
-                gestureEnabled: false,
-                headerLeft: () => null,
-                headerStyle: {
-                  backgroundColor: 'transparent',
-                },
-                headerTitleStyle: {
-                  fontFamily: 'IMFellDWPica',
-                  fontSize: 24,
-                },
-                contentStyle: {
-                  backgroundColor: 'transparent',
-                  padding: '5%',
-                  paddingTop: 0,
-                },
-                animation: 'none', // Prevents white flash during navigation
-            }}>
-              <Stack.Screen name="index" options={{ title: 'Welcome to the Hunt' }} />
-              <Stack.Screen name="hero-log-screen" options={{ title: "Hero's Log" }} />
-              <Stack.Screen name="goodbye-screen" options={{ title: 'Thanks for playing' }} />
-            </Stack>
-          </IOInterfaceProvider>
-        </ThemeProvider>
-      </PaperProvider>
-    </ImageBackground>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}>
+      <ImageBackground style={styles.background} source={require('@/assets/images/old_paper.jpg')}>
+        <PaperProvider theme={paperTheme}>
+          <ThemeProvider value={navigationTheme}>
+            <IOInterfaceProvider>
+              <Stack screenOptions={{
+                  headerTitleAlign: 'center',
+                  headerShadowVisible: false,
+                  headerBackVisible: false,
+                  gestureEnabled: false,
+                  headerLeft: () => null,
+                  headerStyle: {
+                    backgroundColor: 'transparent',
+                  },
+                  headerTitleStyle: {
+                    fontFamily: 'IMFellDWPica',
+                    fontSize: 24,
+                  },
+                  contentStyle: {
+                    backgroundColor: 'transparent',
+                    padding: '5%',
+                    paddingTop: 0,
+                  },
+                  animation: 'none', // Prevents white flash during navigation
+              }}>
+                <Stack.Screen name="index" options={{ title: 'Welcome to the Hunt' }} />
+                <Stack.Screen name="hero-log-screen" options={{ title: "Hero's Log" }} />
+                <Stack.Screen name="goodbye-screen" options={{ title: 'Thanks for playing' }} />
+              </Stack>
+            </IOInterfaceProvider>
+          </ThemeProvider>
+        </PaperProvider>
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 }
 

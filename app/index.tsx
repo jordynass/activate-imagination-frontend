@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, Image } from 'react-native';
 
-import { View } from '@/components/Themed';
 import Camera from '@/components/Camera';
 import { useRouter } from 'expo-router';
 import IOInterfaceContext from '@/contexts/IOInterfaceContext';
 
 import { Card, Text, TextInput, Button, Divider } from 'react-native-paper';
 import { useFonts } from 'expo-font';
+import ScreenView from '@/components/ScreenView';
 
 
 export const STORY_PROMPT = `Welcome to a quest where the only limit is your imagination!
@@ -44,7 +44,7 @@ export default function StartScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenView>
       {stage === 'INPUT' ? (<>
         <Card>
           <Card.Content style={styles.center}>
@@ -70,19 +70,11 @@ export default function StartScreen() {
           </Card.Actions>
         </Card>
       </>)}
-    </View>
+    </ScreenView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    gap: '2%',
-    backgroundColor: 'none',
-  },
   header: {
     fontFamily: 'IMFellDWPica',
     textAlign: 'center',

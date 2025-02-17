@@ -1,3 +1,4 @@
+import ScreenView from "@/components/ScreenView";
 import { View } from "@/components/Themed";
 import { useRouter } from "expo-router";
 import { StyleSheet } from "react-native";
@@ -13,7 +14,7 @@ export default function GoodbyeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScreenView>
       <Card>
         <Card.Content style={styles.center}>
           <Text>{GOODBYE_MSG}</Text>
@@ -22,16 +23,11 @@ export default function GoodbyeScreen() {
           <Button onPress={handleClick}>Play again</Button>
         </Card.Actions>
       </Card>
-    </View>
+    </ScreenView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    backgroundColor: 'none',
-  },
   center: {
     alignSelf: 'center',
   },
