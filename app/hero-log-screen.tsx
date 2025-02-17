@@ -1,5 +1,6 @@
 import { View } from "@/components/Themed";
 import IOInterfaceContext from "@/contexts/IOInterfaceContext";
+import { useRouter } from "expo-router";
 import { useEffect, useState, useContext } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { Button, Text, Card, TextInput } from "react-native-paper";
@@ -8,13 +9,19 @@ export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...'
 
 export default function HeroLogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
-  const {stream: {values, isActive}, emit} = useContext(IOInterfaceContext)!;
+  const {stream: {values, isActive}, emit, listenFor} = useContext(IOInterfaceContext)!;
   const [isWaiting, setIsWaiting] = useState(false);
+  const router = useRouter();
+  
   useEffect(() => {
     if (isActive) {
       setIsWaiting(false);
     }
   }, [isActive]);
+
+  useEffect(() => {
+    listenFor('exit', () => router.push('/goodbye-screen'));
+  }, []);
 
   const content = values.join('');
 

@@ -78,6 +78,7 @@ function RootLayoutNav() {
             }}>
               <Stack.Screen name="index" options={{ title: 'Welcome to the Hunt' }} />
               <Stack.Screen name="hero-log-screen" options={{ title: "Hero's Log" }} />
+              <Stack.Screen name="goodbye-screen" options={{ title: 'Thanks for playing' }} />
             </Stack>
           </IOInterfaceProvider>
         </ThemeProvider>

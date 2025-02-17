@@ -61,6 +61,12 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
     }
   }, [allChunks, capacity, setIsActive, setCapacity]);
 
+
+  // TODO: Migrate to a more declarative pattern like useSocketEventListeners()
+  // This pattern works alright but it expects the caller to wrap it in a useEffect
+  // hook, which is pretty round about by comparison to a hook
+  // useSocketEventListeners(listeners) that completely handles setup and cleanup
+  // for the caller.
   /**
    * Example usage:
    * listenFor('drive', (hopOns: Person[]) => stairCar.getSomeHopOns(hopOns));
@@ -72,7 +78,7 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
 
   /**
    * Example usage:
-   * listenFor('sale', {amount: 50, location: 'Banana Stand'});
+   * emit('sale', {amount: 50, location: 'Banana Stand'});
    */
   function emit(event: string, payload: Record<string, any>) {
     if (!socket.current) {
