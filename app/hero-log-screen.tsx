@@ -16,6 +16,7 @@ export default function HeroLogScreen() {
   
   useEffect(() => {
     if (isActive) {
+      setHeroResponse('');
       setIsWaiting(false);
     }
   }, [isActive]);
