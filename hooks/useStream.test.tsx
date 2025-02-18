@@ -21,7 +21,7 @@ describe('useStream', () => {
       () => useStream(mockSocketFactory),
       { wrapper },
     );
-    return { result, socket, mockSocketFactory };
+    return { result, socket };
   }
 
   describe('stream', () => {
