@@ -3,7 +3,8 @@ import { useRealTimeState } from "./useRealTimeState";
 import { Socket } from "socket.io-client";
 import { type IOInterface } from "@/contexts/IOInterfaceContext";
 import { getSocket, SocketFactory } from "@/utils/SocketFactory";
-import { useGameId } from "./useGameId";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface Chunk {
   order: number;
@@ -19,12 +20,12 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   const [allChunks, setAllChunks] = useState(new Map<number, Chunk>());
   const [capacity, setCapacity] = useState(Infinity);
   const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
-  const gameId = useGameId();
+  const gameId = useSelector((state: RootState) => state.game.gameId);
   const socket = useRef<Socket>();
   const socketEventListeners = useRef<SocketEventListener<any>[]>([]);
 
   useEffect(() => {
-    socket.current = socketFactory(gameId);
+    socket.current = socketFactory();
 
     function addChunk(chunk: Chunk) {
       setAllChunks(prevChunks => {

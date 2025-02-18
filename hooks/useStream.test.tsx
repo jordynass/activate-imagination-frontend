@@ -1,9 +1,15 @@
 import { renderHook, act, cleanup } from '@testing-library/react';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '@/store/store';
 import useStream from './useStream';
+import { type ReactNode } from 'react';
 
-jest.mock('@/hooks/useGameId', () => ({
-  useGameId: () => 'game123',
+jest.mock('nanoid/non-secure', () => ({
+  nanoid: () => 'game123',
 }));
+const wrapper = ({children}: {children: ReactNode}) => (
+  <ReduxProvider store={store}>{children}</ReduxProvider>
+);
 
 describe('useStream', () => {
   function setup() {
@@ -11,15 +17,12 @@ describe('useStream', () => {
     const socket = new SocketMock();
     const mockSocketFactory = jest.fn();
     mockSocketFactory.mockReturnValue(socket);
-    const { result } = renderHook(() => useStream(mockSocketFactory));
+    const { result } = renderHook(
+      () => useStream(mockSocketFactory),
+      { wrapper },
+    );
     return { result, socket, mockSocketFactory };
   }
-
-  it('should pass gameId to socket factory', () => {
-    const { mockSocketFactory } = setup();
-
-    expect(mockSocketFactory).toHaveBeenCalledWith('game123');
-  });
 
   describe('stream', () => {
     it('should initialize with empty values and inactive state', () => {
@@ -159,8 +162,6 @@ describe('useStream', () => {
       emitSpy.mockRestore();
     });
   });
-  
-
 
   describe('listenFor', () => {
     afterEach(() => {
@@ -212,8 +213,4 @@ describe('useStream', () => {
       expect(mockCallback2.mock.calls[0][0]).toEqual({ data: 'data2' });
     });
   });
-
-
-
-
 });

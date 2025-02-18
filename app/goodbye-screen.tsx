@@ -1,15 +1,18 @@
 import ScreenView from "@/components/ScreenView";
-import { View } from "@/components/Themed";
 import { useRouter } from "expo-router";
 import { StyleSheet } from "react-native";
 import { Button, Text, Card } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { newGame } from "@/store/slices/game-slice";
 
 export const GOODBYE_MSG = 'Thanks for playing?'
 
 export default function GoodbyeScreen() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   function handleClick() {
+    dispatch(newGame());
     router.push('/');
   }
 

@@ -23,6 +23,7 @@ defaultConfig.resolver.sourceExts = [
   'json',
   'ts',
   'tsx',
+  'cjs',
   // Add other source extensions you need
 ];
 

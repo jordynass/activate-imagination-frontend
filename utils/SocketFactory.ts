@@ -1,13 +1,8 @@
 import { io, type Socket } from "socket.io-client";
 
-export type SocketFactory = (gameId: string) => Socket;
+export type SocketFactory = () => Socket;
 
-export const getSocket: SocketFactory = (gameId: string) =>
-  io(BackendEndpoint.CLOUD, {
-    extraHeaders: {
-      'x-game-id': gameId,
-    },
-  });
+export const getSocket: SocketFactory = () => io(BackendEndpoint.CLOUD);
 
 enum BackendEndpoint {
   LOCAL_WIFI = "ws://192.168.1.194:3000",
