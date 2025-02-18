@@ -11,18 +11,12 @@ interface Chunk {
   content: string;
 }
 
-interface SocketEventListener<Payload> {
-  event: string;
-  callback: (payload: Payload) => void;
-}
-
 function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   const [allChunks, setAllChunks] = useState(new Map<number, Chunk>());
   const [capacity, setCapacity] = useState(Infinity);
   const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
   const gameId = useSelector((state: RootState) => state.game.gameId);
   const socket = useRef<Socket>();
-  const socketEventListeners = useRef<SocketEventListener<any>[]>([]);
 
   useEffect(() => {
     socket.current = socketFactory();
@@ -47,9 +41,6 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
       socket.current?.off("output", addChunk);
       socket.current?.off("endOutput", handleEndOutput);
       socket.current?.disconnect();
-      for (const {event, callback} of socketEventListeners.current) {
-        socket.current?.off(event, callback);
-      }
     }
     // TODO: Switch the last value of getRealTimeState to a ref or useCallback and add isActiveRef or
     // getIsActiveNow (resp) to the dep list.
@@ -61,21 +52,6 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
       setCapacity(Infinity);
     }
   }, [allChunks, capacity, setIsActive, setCapacity]);
-
-
-  // TODO: Migrate to a more declarative pattern like useSocketEventListeners()
-  // This pattern works alright but it expects the caller to wrap it in a useEffect
-  // hook, which is pretty round about by comparison to a hook
-  // useSocketEventListeners(listeners) that completely handles setup and cleanup
-  // for the caller.
-  /**
-   * Example usage:
-   * listenFor('drive', (hopOns: Person[]) => stairCar.getSomeHopOns(hopOns));
-   */
-  function listenFor<Payload>(event: string, callback: (payload: Payload) => void) {
-    socket.current?.on(event, callback);
-    socketEventListeners.current.push({event, callback})
-  }
 
   /**
    * Example usage:
@@ -98,7 +74,7 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
     }
   }
   
-  return {stream: {values, isActive}, emit, listenFor};
+  return {stream: {values, isActive}, emit};
 }
 
 export default useStream;

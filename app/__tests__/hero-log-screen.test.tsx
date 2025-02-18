@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { useRouter } from 'expo-router';
 import HeroLogScreen, { ACTION_INPUT_PLACEHOLDER } from '../hero-log-screen';
 import IOInterfaceContext, { type Stream } from "@/contexts/IOInterfaceContext";
+import { SocketEventListener } from '@/hooks/useSocketEventListeners';
 
 jest.mock('@/hooks/useStream');
 jest.mock('expo-router', () => ({
@@ -12,15 +13,14 @@ jest.mock('expo-router', () => ({
 describe('HeroLogScreen', () => {
   function setup(stream: Stream) {
     const emit = jest.fn();
-    const listenFor = jest.fn();
     const mockRouter = { push: jest.fn() };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     jest.clearAllMocks();
     const harness = render(
-      <IOInterfaceContext.Provider value={{stream, emit, listenFor}}>
+      <IOInterfaceContext.Provider value={{stream, emit}}>
         <HeroLogScreen />
       </IOInterfaceContext.Provider>);
-    return { emit, harness, mockRouter, listenFor }
+    return { emit, harness, mockRouter }
   }
 
   it('renders correctly when stream is inactive', () => {
@@ -66,7 +66,7 @@ describe('HeroLogScreen', () => {
   });
   
   it('hides ActivityIndicator when stream resumes', async () => {
-    const {emit, listenFor, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'], isActive: false });
+    const {emit, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'], isActive: false });
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
     fireEvent.changeText(input, 'test response');
@@ -77,7 +77,7 @@ describe('HeroLogScreen', () => {
     });
 
     rerender(
-      <IOInterfaceContext.Provider value={{emit, listenFor, stream: { values: ['message2'], isActive: true }}}>
+      <IOInterfaceContext.Provider value={{emit, stream: { values: ['message2'], isActive: true }}}>
         <HeroLogScreen />
       </IOInterfaceContext.Provider>);
     
@@ -86,22 +86,20 @@ describe('HeroLogScreen', () => {
     });
   });
 
-  describe('listenFor', () => {
-    it('sets listener for exit event', async () => {
-      const {listenFor} = setup({ values: ['message1'], isActive: false });
-  
-      expect(listenFor).toHaveBeenCalledWith('exit', expect.any(Function));
-    });
-  
-    it('routes to goodbye page on exit', async () => {
-      const {listenFor, mockRouter} = setup({ values: ['message1'], isActive: false });
+  it('routes to goodbye page on exit event', () => {
+    const spy = jest.spyOn(require('@/hooks/useSocketEventListeners'), 'default');
+    const { mockRouter } = setup({ values: [], isActive: false });
 
-      expect(mockRouter.push).not.toHaveBeenCalled();
-  
-      const exitCallback = listenFor.mock.calls[0][1];
-      exitCallback();
-      
-      expect(mockRouter.push).toHaveBeenCalledWith('/goodbye-screen');
-    });
+    expect(spy).toHaveBeenCalledWith([
+      {event: 'exit', callback: expect.any(Function)}
+    ]);
+    const socketEventListeners = spy.mock.calls[0][0] as SocketEventListener<any>[];
+    const exitCallback = (socketEventListeners[0]).callback as Function;
+    exitCallback();
+
+    expect(mockRouter.push).toHaveBeenCalledWith('/goodbye-screen');
+
+    spy.mockReset();
+    spy.mockRestore();
   });
 });

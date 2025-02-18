@@ -1,6 +1,6 @@
 import ScreenView from "@/components/ScreenView";
-import { View } from "@/components/Themed";
 import IOInterfaceContext from "@/contexts/IOInterfaceContext";
+import useSocketEventListeners from "@/hooks/useSocketEventListeners";
 import { useRouter } from "expo-router";
 import { useEffect, useState, useContext } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
@@ -10,9 +10,12 @@ export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...'
 
 export default function HeroLogScreen() {
   const [heroResponse, setHeroResponse] = useState('');
-  const {stream: {values, isActive}, emit, listenFor} = useContext(IOInterfaceContext)!;
+  const {stream: {values, isActive}, emit} = useContext(IOInterfaceContext)!;
   const [isWaiting, setIsWaiting] = useState(false);
   const router = useRouter();
+  useSocketEventListeners([
+    { event: 'exit', callback: () => router.push('/goodbye-screen')}
+  ]);
   
   useEffect(() => {
     if (isActive) {
@@ -20,10 +23,6 @@ export default function HeroLogScreen() {
       setIsWaiting(false);
     }
   }, [isActive]);
-
-  useEffect(() => {
-    listenFor('exit', () => router.push('/goodbye-screen'));
-  }, []);
 
   const content = values.join('');
 
