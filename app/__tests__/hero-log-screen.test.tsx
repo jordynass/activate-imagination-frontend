@@ -5,7 +5,6 @@ import HeroLogScreen, { ACTION_INPUT_PLACEHOLDER } from '../hero-log-screen';
 import IOInterfaceContext, { type Stream } from "@/contexts/IOInterfaceContext";
 import { SocketEventListener } from '@/hooks/useSocketEventListeners';
 
-jest.mock('@/hooks/useStream');
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
 }));
