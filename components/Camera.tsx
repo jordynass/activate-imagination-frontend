@@ -1,10 +1,16 @@
-import { useRef } from 'react';
+import { MutableRefObject, useRef } from 'react';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { StyleSheet } from 'react-native';
 
 import { View } from '@/components/Themed'
 
 import { Text, Button, Card } from 'react-native-paper';
+
+const Strings = {
+  NEED_PERMISSION: 'We need your permission to show the camera',
+  TAKE_PHOTO: 'Take Photo',
+  GRANT_PERMISSION: 'Grant Permission'
+};
 
 type Props = {
   headerText: string,
@@ -35,18 +41,42 @@ export default function Camera({onTakePhoto, headerText}: Props) {
     <Card>
       <Card.Content style={styles.content}>
         <Text>{headerText}</Text>
-        {permission.granted ?
-            <CameraView ref={cameraRef} style={styles.camera} /> :
-            <Text style={styles.camera}>We need your permission to show the camera</Text>}
+        <CameraBox hasPermission={permission.granted} cameraRef={cameraRef} />
       </Card.Content>
       <Card.Actions style={styles.actions}>
-        {permission.granted ?
-            <Button onPress={takePhoto}>Take Photo</Button> :
-            <Button onPress={requestPermission}>Grant Permission</Button>}
+        <CameraActions hasPermission={permission.granted} onTakePhoto={takePhoto} onRequestPermission={requestPermission}/>
       </Card.Actions>
     </Card>
   );
 }
+
+
+interface CameraBoxProps {
+  hasPermission: boolean;
+  cameraRef: MutableRefObject<CameraView | null>;
+}
+
+function CameraBox({hasPermission, cameraRef}: CameraBoxProps) {
+  if (hasPermission) {
+    return <CameraView style={styles.camera} ref={cameraRef} />;
+  }
+  return <Text style={styles.camera}>{Strings.NEED_PERMISSION}</Text>;
+}
+
+
+interface CameraActionsProps {
+  hasPermission: boolean;
+  onTakePhoto: () => void;
+  onRequestPermission: () => void;
+}
+
+function CameraActions({hasPermission, onTakePhoto, onRequestPermission}: CameraActionsProps) {
+  if (hasPermission) {
+    return <Button onPress={onTakePhoto}>{Strings.TAKE_PHOTO}</Button>;
+  }
+  return <Button onPress={onRequestPermission}>{Strings.GRANT_PERMISSION}</Button>;
+}
+
 
 const CAMERA_WINDOW = 300;
 const CAMERA_TOP_MARGIN = 15;
@@ -56,6 +86,9 @@ const styles = StyleSheet.create({
     width: CAMERA_WINDOW,
     height: CAMERA_WINDOW,
     marginTop: CAMERA_TOP_MARGIN,
+    alignSelf: 'center',
+    textAlignVertical: 'center',
+    color: 'red',
   },
   permissionRequest: {
     display: 'flex',
