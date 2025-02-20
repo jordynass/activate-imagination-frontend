@@ -6,7 +6,6 @@ import { useRouter } from 'expo-router';
 import IOInterfaceContext from '@/contexts/IOInterfaceContext';
 
 import { Card, Text, TextInput, Button, Divider } from 'react-native-paper';
-import { useFonts } from 'expo-font';
 import ScreenView from '@/components/ScreenView';
 
 
@@ -27,11 +26,6 @@ export default function StartScreen() {
   const [stage, setStage] = useState<'INPUT'|'CONFIRM'>('INPUT');
   const router = useRouter();
   const { emit } = useContext(IOInterfaceContext)!;
-  useFonts({
-    'IMFellDWPica': {
-      uri: 'https://fonts.gstatic.com/s/imfelldwpica/v16/2sDGZGRQotv9nbn2qSl0TxXVYNw9ZA.ttf'
-    }
-  });
 
   function handleTakePhoto(b64: string) {
     setPhotoBase64(b64);
@@ -75,11 +69,6 @@ export default function StartScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    fontFamily: 'IMFellDWPica',
-    textAlign: 'center',
-    fontSize: 24
-  },
   photo: {
     width: 300,
     height: 300,
