@@ -5,7 +5,7 @@ import { Button, Text, Card } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { newGame } from "@/store/slices/game-slice";
 
-export const GOODBYE_MSG = 'Thanks for playing?'
+export const GOODBYE_MSG = 'I hope you enjoyed your adventure. See you next time!'
 
 export default function GoodbyeScreen() {
   const router = useRouter();
