@@ -6,8 +6,8 @@ import { View } from '@/components/Themed'
 
 import { Text, Button, Card } from 'react-native-paper';
 
-const Strings = {
-  NEED_PERMISSION: 'We need your permission to show the camera',
+const DisplayStrings = {
+  NEED_PERMISSION: 'I need your permission to show the camera',
   TAKE_PHOTO: 'Take Photo',
   GRANT_PERMISSION: 'Grant Permission'
 };
@@ -60,7 +60,7 @@ function CameraBox({hasPermission, cameraRef}: CameraBoxProps) {
   if (hasPermission) {
     return <CameraView style={styles.camera} ref={cameraRef} />;
   }
-  return <Text style={styles.camera}>{Strings.NEED_PERMISSION}</Text>;
+  return <Text style={styles.camera}>{DisplayStrings.NEED_PERMISSION}</Text>;
 }
 
 
@@ -72,9 +72,9 @@ interface CameraActionsProps {
 
 function CameraActions({hasPermission, onTakePhoto, onRequestPermission}: CameraActionsProps) {
   if (hasPermission) {
-    return <Button onPress={onTakePhoto}>{Strings.TAKE_PHOTO}</Button>;
+    return <Button onPress={onTakePhoto}>{DisplayStrings.TAKE_PHOTO}</Button>;
   }
-  return <Button onPress={onRequestPermission}>{Strings.GRANT_PERMISSION}</Button>;
+  return <Button onPress={onRequestPermission}>{DisplayStrings.GRANT_PERMISSION}</Button>;
 }
 
 
@@ -107,3 +107,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+export const TEST_ONLY = {DisplayStrings};

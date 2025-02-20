@@ -5,10 +5,11 @@ jest.mock('expo-camera', () => ({
 
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import Camera from './Camera';
+import Camera, { TEST_ONLY } from './Camera';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 const mockRequestPermission = jest.fn();
+const {DisplayStrings} = TEST_ONLY;
 
 describe('Camera', () => {
   beforeEach(() => {
@@ -33,8 +34,8 @@ describe('Camera', () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: false }, mockRequestPermission ]);
 
     const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
-    expect(getByText('We need your permission to show the camera')).toBeTruthy();
-    const button = getByText('Grant Permission');
+    expect(getByText(DisplayStrings.NEED_PERMISSION)).toBeTruthy();
+    const button = getByText(DisplayStrings.GRANT_PERMISSION);
     fireEvent.press(button);
     expect(mockRequestPermission).toHaveBeenCalled();
   });
@@ -43,7 +44,7 @@ describe('Camera', () => {
     (useCameraPermissions as jest.Mock).mockReturnValue([ { granted: false }, mockRequestPermission ]);
 
     const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
-    const button = getByText('Grant Permission');
+    const button = getByText(DisplayStrings.GRANT_PERMISSION);
     fireEvent.press(button);
     expect(mockRequestPermission).toHaveBeenCalled();
   });
@@ -53,7 +54,7 @@ describe('Camera', () => {
 
     const { getByText } = render(<Camera headerText="Some header" onTakePhoto={jest.fn()} />);
     expect(CameraView).toHaveBeenCalled();
-    expect(getByText('Take Photo')).toBeTruthy();
+    expect(getByText(DisplayStrings.TAKE_PHOTO)).toBeTruthy();
   });
 
   it('takes a photo when button is pressed', async () => {
@@ -65,7 +66,7 @@ describe('Camera', () => {
     jest.spyOn(React, 'useRef').mockReturnValueOnce({ current: mockCameraView });
 
     const { getByText } = render(<Camera headerText="Some header" onTakePhoto={onTakePhoto} />);
-    fireEvent.press(getByText('Take Photo'));
+    fireEvent.press(getByText(DisplayStrings.TAKE_PHOTO));
 
     await waitFor(() => {
       expect(onTakePhoto).toHaveBeenCalledWith('base64string');
