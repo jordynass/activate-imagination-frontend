@@ -27,10 +27,6 @@ export default function StartScreen() {
   const router = useRouter();
   const { emit } = useContext(IOInterfaceContext)!;
 
-  function handleTakePhoto(b64: string) {
-    setPhotoBase64(b64);
-  }
-
   function startQuest() {
     console.log("Starting Quest...");
     emit("newGame", {storyPrompt, photo: photoBase64});
@@ -48,8 +44,11 @@ export default function StartScreen() {
             <TextInput style={styles.textInput} contentStyle={styles.textInputContent} multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} placeholder={STORY_PLACEHOLDER}/>
           </Card.Actions>
         </Card>
-        <Camera headerText={PHOTO_PROMPT} onTakePhoto={handleTakePhoto} />
-        <Button style={styles.flexEnd} mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
+        <Camera
+            headerText={PHOTO_PROMPT}
+            onRejectPhoto={() => setPhotoBase64(null)}
+            onTakePhoto={b64 => setPhotoBase64(b64)} />
+        <Button style={styles.flexEnd} contentStyle={{}} mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
       </>) : (<>
         <Card>
           <Card.Content style={styles.center}>
