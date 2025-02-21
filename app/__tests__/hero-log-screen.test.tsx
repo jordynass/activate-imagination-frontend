@@ -98,7 +98,6 @@ describe('HeroLogScreen', () => {
 
     expect(mockRouter.push).toHaveBeenCalledWith('/goodbye-screen');
 
-    spy.mockReset();
     spy.mockRestore();
   });
 });
