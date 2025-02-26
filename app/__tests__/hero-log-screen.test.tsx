@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import HeroLogScreen, { ACTION_INPUT_PLACEHOLDER } from '../hero-log-screen';
 import IOInterfaceContext, { type Stream } from "@/contexts/IOInterfaceContext";
 import { SocketEventListener } from '@/hooks/useSocketEventListeners';
+import { InputKey } from '@/api';
 
 jest.mock('expo-router', () => ({
   useRouter: jest.fn(),
@@ -23,27 +24,27 @@ describe('HeroLogScreen', () => {
   }
 
   it('renders correctly when stream is inactive', () => {
-    const {harness: { getByText, queryByText }} = setup({ values: [], isActive: false });
+    const {harness: { getByText, queryByText }} = setup({ values: [], isActive: false, responseKey: null });
 
     expect(getByText('')).toBeTruthy();
     expect(queryByText('Take Action')).toBeNull();
   });
 
   it('renders content when stream has values', () => {
-    const {harness: { getByText }} = setup({ values: ['message1', 'message2'], isActive: false });
+    const {harness: { getByText }} = setup({ values: ['message1', 'message2'], isActive: false, responseKey: null });
 
     expect(getByText('message1message2')).toBeTruthy();
   });
 
   it('renders input and button when stream is inactive and not waiting', () => {
-    const {harness: { getByText, getByPlaceholderText }} = setup({ values: ['message1'], isActive: false });
+    const {harness: { getByText, getByPlaceholderText }} = setup({ values: ['message1'], isActive: false, responseKey: null });
     
     expect(getByText('Take Action')).toBeTruthy();
     expect(getByPlaceholderText(ACTION_INPUT_PLACEHOLDER)).toBeTruthy();
   });
 
   it('emits action on button press', () => {
-    const {emit, harness: { getByText, getByPlaceholderText }} = setup({ values: ['message1'], isActive: false });
+    const {emit, harness: { getByText, getByPlaceholderText }} = setup({ values: ['message1'], isActive: false, responseKey: null });
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
     fireEvent.changeText(input, 'test response');
@@ -53,7 +54,7 @@ describe('HeroLogScreen', () => {
   });
 
   it('renders ActivityIndicator when isWaiting is true', async () => {
-    const {harness: { getByText, getByPlaceholderText, queryByTestId }} = setup({ values: ['message1'], isActive: false });
+    const {harness: { getByText, getByPlaceholderText, queryByTestId }} = setup({ values: ['message1'], isActive: false, responseKey: null });
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
     fireEvent.changeText(input, 'test response');
@@ -65,7 +66,7 @@ describe('HeroLogScreen', () => {
   });
   
   it('hides ActivityIndicator when stream resumes', async () => {
-    const {emit, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'], isActive: false });
+    const {emit, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'], isActive: false, responseKey: null });
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
     fireEvent.changeText(input, 'test response');
@@ -76,7 +77,7 @@ describe('HeroLogScreen', () => {
     });
 
     rerender(
-      <IOInterfaceContext.Provider value={{emit, stream: { values: ['message2'], isActive: true }}}>
+      <IOInterfaceContext.Provider value={{emit, stream: { values: ['message2'], isActive: true, responseKey: InputKey.ACTION }}}>
         <HeroLogScreen />
       </IOInterfaceContext.Provider>);
     
@@ -87,7 +88,7 @@ describe('HeroLogScreen', () => {
 
   it('routes to goodbye page on exit event', () => {
     const spy = jest.spyOn(require('@/hooks/useSocketEventListeners'), 'default');
-    const { mockRouter } = setup({ values: [], isActive: false });
+    const { mockRouter } = setup({ values: [], isActive: false, responseKey: null });
 
     expect(spy).toHaveBeenCalledWith([
       {event: 'exit', callback: expect.any(Function)}

@@ -3,6 +3,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { store } from '@/store/store';
 import useStream from './useStream';
 import { type ReactNode } from 'react';
+import { InputKey } from '@/api';
 
 jest.mock('nanoid/non-secure', () => ({
   nanoid: () => 'game123',
@@ -54,10 +55,27 @@ describe('useStream', () => {
       act(() => {
         socket.socketClient.emit('output', chunk0);
         socket.socketClient.emit('output', chunk1);
-        socket.socketClient.emit('endOutput', 2);
+        socket.socketClient.emit('endOutput', {length: 2, responseKey: InputKey.ACTION});
       });
 
       expect(result.current.stream.isActive).toBe(false);
+    });
+
+    it('should set response key on "endOutput" event', () => {
+      const { socket, result } = setup();
+
+      const chunk0 = { order: 0, content: 'first content' };
+      const chunk1 = { order: 1, content: 'second content' };
+
+      expect(result.current.stream.responseKey).toBe(null);
+
+      act(() => {
+        socket.socketClient.emit('output', chunk0);
+        socket.socketClient.emit('endOutput', {length: 2, responseKey: InputKey.ACTION});
+        socket.socketClient.emit('output', chunk1);
+      });
+
+      expect(result.current.stream.responseKey).toBe(InputKey.ACTION);
     });
 
     it('should remain active after "endOutput" event if not all chunks were received', () => {
@@ -68,7 +86,7 @@ describe('useStream', () => {
       act(() => {
         // chunks0 was not received
         socket.socketClient.emit('output', chunk1);
-        socket.socketClient.emit('endOutput', 2);
+        socket.socketClient.emit('endOutput', {length: 2, responseKey: InputKey.ACTION});
       });
 
       expect(result.current.stream.isActive).toBe(true);
@@ -82,7 +100,7 @@ describe('useStream', () => {
 
       act(() => {
         socket.socketClient.emit('output', chunk1);
-        socket.socketClient.emit('endOutput', 2);
+        socket.socketClient.emit('endOutput', {length: 2, responseKey: InputKey.ACTION});
         socket.socketClient.emit('output', chunk0);
       });
 
@@ -112,7 +130,7 @@ describe('useStream', () => {
 
       act(() => {
         socket.socketClient.emit('output', firstStreamChunk);
-        socket.socketClient.emit('endOutput', 1);
+        socket.socketClient.emit('endOutput', {length: 1, responseKey: InputKey.ACTION});
       });
 
       expect(result.current.stream.isActive).toBe(false);
@@ -126,25 +144,28 @@ describe('useStream', () => {
       expect(result.current.stream.isActive).toBe(true);
     });
 
-    it('should reset values when a later stream starts', () => {
+    it('should reset values and responseKey when a later stream starts', () => {
       const { socket, result } = setup();
 
       const firstStreamChunk = { order: 0, content: 'first' };
 
       act(() => {
         socket.socketClient.emit('output', firstStreamChunk);
-        socket.socketClient.emit('endOutput', 1);
+        socket.socketClient.emit('endOutput', {length: 1, responseKey: InputKey.ACTION});
       });
 
       expect(result.current.stream.values).toEqual(['first']);
+      expect(result.current.stream.responseKey).toBe(InputKey.ACTION);
 
       const secondStreamChunk = { order: 0, content: 'second' };
 
       act(() => {
         socket.socketClient.emit('output', secondStreamChunk);
+        socket.socketClient.emit('endOutput', {length: 1, responseKey: InputKey.NEW_SCENE});
       });
 
       expect(result.current.stream.values).toEqual(['second']);
+      expect(result.current.stream.responseKey).toBe(InputKey.NEW_SCENE);
     });
   });
 

@@ -5,6 +5,7 @@ import { type IOInterface } from "@/contexts/IOInterfaceContext";
 import { getSocket, SocketFactory } from "@/utils/SocketFactory";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { EndStreamPayload, InputKey } from "@/api";
 
 interface Chunk {
   order: number;
@@ -14,6 +15,7 @@ interface Chunk {
 function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
   const [allChunks, setAllChunks] = useState(new Map<number, Chunk>());
   const [capacity, setCapacity] = useState(Infinity);
+  const [responseKey, setResponseKey] = useState<InputKey|null>(null);
   const [isActive, setIsActive, getIsActiveNow] = useRealTimeState(false);
   const gameId = useSelector((state: RootState) => state.game.gameId);
   const socket = useRef<Socket>();
@@ -32,7 +34,10 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
         return newChunks;
       });
     }
-    const handleEndOutput = (cap: number) => setCapacity(cap);
+    function handleEndOutput(payload: EndStreamPayload) {
+      setCapacity(payload.length);
+      setResponseKey(payload.responseKey);
+    }
     
     socket.current.on("output", addChunk);
     socket.current.on("endOutput", handleEndOutput);
@@ -73,8 +78,8 @@ function useStream(socketFactory: SocketFactory = getSocket): IOInterface {
       break;
     }
   }
-  
-  return {stream: {values, isActive}, emit};
+
+  return {stream: {values, isActive, responseKey}, emit};
 }
 
 export default useStream;
