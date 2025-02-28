@@ -1,5 +1,5 @@
 import { InputKey } from '@/api';
-import { createContext, MutableRefObject } from 'react';
+import { createContext } from 'react';
 
 export type Stream = {
   values: string[],

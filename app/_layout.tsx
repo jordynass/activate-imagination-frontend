@@ -11,7 +11,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/boilerplate/useColorScheme';
 import IOInterfaceProvider from '@/components/IOProvider';
-import { ImageBackground, KeyboardAvoidingView, Platform, StatusBar, StyleSheet } from 'react-native';
+import { ImageBackground, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
