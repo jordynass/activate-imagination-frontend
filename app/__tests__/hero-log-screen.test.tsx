@@ -37,11 +37,14 @@ describe('HeroLogScreen', () => {
     return { stream, emit, harness, mockRouter }
   }
 
-  it('renders correctly when stream is inactive', () => {
-    const {harness: { queryByTestId, queryByText }} = setup();
+  it('renders no actions while stream is active', () => {
+    const {emit, stream, harness: { queryByText, queryByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'], isActive: true });
+    updateStream(rerender, stream, { values: ['message1', 'message2'] }, emit);
 
-    expect(queryByTestId('card-content')).toBeNull();
+    expect(queryByText(START_SCENE_BUTTON)).toBeNull();
+    expect(queryByTestId('camera')).toBeNull();
     expect(queryByText(ACTION_BUTTON)).toBeNull();
+    expect(queryByPlaceholderText(ACTION_INPUT_PLACEHOLDER)).toBeNull();
   });
 
   it('renders content when stream has values', () => {
@@ -62,11 +65,11 @@ describe('HeroLogScreen', () => {
   });
 
   it('renders camera controls when stream finishes with NEW_SCENE InputKey', () => {
-    const {emit, stream, harness: { queryByText, queryByPlaceholderText, getByTestId, rerender }} = setup({ values: ['message1'] });
+    const {emit, stream, harness: { queryByText, queryByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'] });
     updateStream(rerender, stream, { isActive: false, responseKey: InputKey.NEW_SCENE }, emit);
 
     expect(queryByText(START_SCENE_BUTTON)).toBeTruthy();
-    expect(getByTestId('camera')).toBeTruthy();
+    expect(queryByTestId('camera')).toBeTruthy();
 
     expect(queryByText(ACTION_BUTTON)).toBeNull();
     expect(queryByPlaceholderText(ACTION_INPUT_PLACEHOLDER)).toBeNull();
@@ -84,10 +87,11 @@ describe('HeroLogScreen', () => {
   });
 
   it('renders ActivityIndicator while waiting', async () => {
-    const {emit, stream, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'] });
+    const {emit, stream, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup();
     updateStream(rerender, stream, { isActive: false, responseKey: InputKey.ACTION }, emit);
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
+
     fireEvent.changeText(input, 'test response');
     fireEvent.press(getByText(ACTION_BUTTON));
 
@@ -97,7 +101,7 @@ describe('HeroLogScreen', () => {
   });
   
   it('hides ActivityIndicator when stream resumes', async () => {
-    const {emit, stream, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'] });
+    const {emit, stream, harness: { getByText, getByPlaceholderText, queryByTestId, rerender }} = setup();
     const currentStream = updateStream(rerender, stream, { isActive: false, responseKey: InputKey.ACTION }, emit);
 
     const input = getByPlaceholderText(ACTION_INPUT_PLACEHOLDER);
@@ -115,8 +119,8 @@ describe('HeroLogScreen', () => {
     });
   });
 
-  it('updates controls based on latest stream\' response key', () => {
-    const {emit, stream, harness: { queryByText, queryByPlaceholderText, getByTestId, rerender }} = setup({ values: ['message1'] });
+  it('updates controls based on latest stream response key', () => {
+    const {emit, stream, harness: { queryByText, queryByPlaceholderText, queryByTestId, rerender }} = setup({ values: ['message1'] });
     updateStream(rerender, stream, { isActive: false, responseKey: InputKey.ACTION }, emit);
 
     expect(queryByText(ACTION_BUTTON)).toBeTruthy();
@@ -125,7 +129,7 @@ describe('HeroLogScreen', () => {
     updateStream(rerender, stream, { isActive: false, responseKey: InputKey.NEW_SCENE }, emit);
 
     expect(queryByText(START_SCENE_BUTTON)).toBeTruthy();
-    expect(getByTestId('camera')).toBeTruthy();
+    expect(queryByTestId('camera')).toBeTruthy();
 
   });
 
