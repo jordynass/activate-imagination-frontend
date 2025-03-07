@@ -1,13 +1,14 @@
 import { InputKey } from "@/api";
 import Camera from "@/components/Camera";
 import ScreenView from "@/components/ScreenView";
+import { TextInput } from "@/components/Themed";
 import IOInterfaceContext from "@/contexts/IOInterfaceContext";
 import useSocketEventListeners from "@/hooks/useSocketEventListeners";
 import { assert } from "@/utils/utils";
 import { useRouter } from "expo-router";
 import { useEffect, useState, useContext, ReactNode } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
-import { Button, Text, Card, TextInput } from "react-native-paper";
+import { Button, Text, Card } from "react-native-paper";
 
 export const ACTION_INPUT_PLACEHOLDER = 'Choose wisely...';
 export const CAMERA_HEADER = 'Show me your new surroundings';
@@ -15,7 +16,6 @@ export const START_SCENE_BUTTON = 'Continue adventure';
 export const ACTION_BUTTON = 'Take Action';
 
 export const DEFAULT_ACTION_MESSAGE = 'What will you do next?';
-export const DEFAULT_NEW_SCENE_MESSAGE = 'You are entering a new scene...';
 
 export default function HeroLogScreen() {
   const [heroInput, setHeroInput] = useState('');
@@ -34,9 +34,9 @@ export default function HeroLogScreen() {
   }, [isActive]);
 
   const currentContent = values.join('').trim();
-  const emptyResponseFallback = responseKey === InputKey.NEW_SCENE ? DEFAULT_NEW_SCENE_MESSAGE : DEFAULT_ACTION_MESSAGE;
-  const defaultText = (isActive || isWaiting) ? null : emptyResponseFallback;
+  const defaultText = (isActive || isWaiting || responseKey === InputKey.NEW_SCENE) ? null : DEFAULT_ACTION_MESSAGE;
   const content = currentContent || defaultText;
+  const needCameraInput = !isActive && !isWaiting && responseKey === InputKey.NEW_SCENE;
 
   function sendInput() {
     setIsWaiting(true);
@@ -50,24 +50,25 @@ export default function HeroLogScreen() {
     }
   }
 
-  const needCameraInput = !isActive && !isWaiting && responseKey === InputKey.NEW_SCENE;
-
   return (
     <ScreenView>
       <Card>
-        <Card.Content style={styles.center}>
-          {!isWaiting && <Text>{content}</Text>}
-        </Card.Content>
+        {!isWaiting && content && (
+          <Card.Content style={styles.content}>
+            <Text>{content}</Text>
+          </Card.Content>
+        )}
         <Card.Actions style={styles.actions}>
           <CardActionsBody isWaiting={isWaiting} showActions={!isActive && !isWaiting && responseKey === InputKey.ACTION}>
             <TextInput
                 style={styles.textInput}
                 contentStyle={styles.textInputContent}
+                mode="outlined"
                 multiline={true}
                 value={heroInput}
                 onChangeText={setHeroInput}
                 placeholder={ACTION_INPUT_PLACEHOLDER}/>
-            <Button onPress={sendInput}>{ACTION_BUTTON}</Button>
+            <Button mode="contained" onPress={sendInput}>{ACTION_BUTTON}</Button>
           </CardActionsBody>
         </Card.Actions>
       </Card>
@@ -109,7 +110,7 @@ function CardActionsBody({children, showActions, isWaiting}: CardActionsBodyProp
 
 
 const styles = StyleSheet.create({
-  center: {
+  content: {
     alignSelf: 'center',
     display: 'flex',
     flexDirection: 'column',
@@ -118,7 +119,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'stretch',
-    gap: 10,
+    gap: 15,
+    padding: 15,
   },
   textInputContent: {
     paddingBottom: 5,

@@ -5,8 +5,9 @@ import Camera from '@/components/Camera';
 import { useRouter } from 'expo-router';
 import IOInterfaceContext from '@/contexts/IOInterfaceContext';
 
-import { Card, Text, TextInput, Button, Divider } from 'react-native-paper';
+import { Card, Text, Button, Divider } from 'react-native-paper';
 import ScreenView from '@/components/ScreenView';
+import { TextInput, View } from '@/components/Themed';
 
 
 export const STORY_PROMPT = `Welcome to a quest where the only limit is your imagination!
@@ -37,11 +38,20 @@ export default function StartScreen() {
     <ScreenView>
       {stage === 'INPUT' ? (<>
         <Card>
-          <Card.Content style={styles.center}>
+          <Card.Content style={styles.content}>
             <Text>{STORY_PROMPT}</Text>
           </Card.Content>
-          <Card.Actions style={styles.center}>
-            <TextInput style={styles.textInput} contentStyle={styles.textInputContent} multiline={true} value={storyPrompt} onChangeText={setStoryPrompt} placeholder={STORY_PLACEHOLDER}/>
+          <Card.Actions style={styles.actions}>
+            <>
+              <TextInput
+                  style={styles.textInput}
+                  contentStyle={styles.textInputContent}
+                  mode="outlined"
+                  multiline={true}
+                  value={storyPrompt}
+                  onChangeText={setStoryPrompt}
+                  placeholder={STORY_PLACEHOLDER}/>
+              </>
           </Card.Actions>
         </Card>
         <Camera
@@ -51,15 +61,17 @@ export default function StartScreen() {
         <Button style={styles.flexEnd} contentStyle={{}} mode="contained" onPress={() => setStage('CONFIRM')}>Confirm</Button>
       </>) : (<>
         <Card>
-          <Card.Content style={styles.center}>
+          <Card.Content style={styles.content}>
             <Text>{CONFIRMATION_PROMPT}</Text>
             <Divider style={styles.divider} />
             <Text style={{ fontStyle: 'italic' }}>"{storyPrompt}"</Text>
             <Image source={{uri: `data:image/jpeg;base64,${photoBase64}`}} style={styles.photo} />
           </Card.Content>
-          <Card.Actions style={styles.center}>
-            <Button mode="outlined" onPress={() => setStage('INPUT')}>Change</Button>
-            <Button mode="contained" onPress={startQuest}>Start Quest</Button>
+          <Card.Actions style={styles.actions}>
+            <View style={styles.buttonRow}>
+              <Button mode="outlined" onPress={() => setStage('INPUT')}>Change</Button>
+              <Button mode="contained" onPress={startQuest}>Start Quest</Button>
+            </View>
           </Card.Actions>
         </Card>
       </>)}
@@ -77,6 +89,18 @@ const styles = StyleSheet.create({
   center: {
     alignSelf: 'center',
   },
+  content: {
+    alignSelf: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  actions: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'stretch',
+    gap: 10,
+    padding: 15,
+  },
   textInputContent: {
     paddingBottom: 5,
     paddingTop: 5,
@@ -90,5 +114,13 @@ const styles = StyleSheet.create({
   },
   flexEnd: {
     marginTop: 'auto',
+  },
+  buttonRow: {
+    backgroundColor: 'transparent',
+    display: 'flex',
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    gap: 10,
+    justifyContent: 'space-between',
   },
 });

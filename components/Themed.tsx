@@ -3,7 +3,8 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { Text as DefaultText, View as DefaultView, TextInput as DefaultTextInput } from 'react-native';
+import { Text as DefaultText, View as DefaultView } from 'react-native';
+import { TextInput as PaperTextInput, TextInputProps as PaperTextInputProps } from 'react-native-paper';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '../hooks/boilerplate/useColorScheme';
@@ -15,7 +16,7 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
-export type TextInputProps = ThemeProps & DefaultTextInput['props'];
+export type TextInputProps = ThemeProps & PaperTextInputProps;
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -50,5 +51,5 @@ export function TextInput(props: TextInputProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'inputBackground');
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
-  return <DefaultTextInput style={[{ backgroundColor, color }, style]} {...otherProps} />;
+  return <PaperTextInput style={[{ backgroundColor, color }, style]} {...otherProps} />;
 }
