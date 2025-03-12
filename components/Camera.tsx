@@ -86,7 +86,12 @@ const CameraBox = forwardRef(
   if (hasPermission) {
     return <CameraView style={styles.camera} ref={ref} />;
   }
-  return <Text style={styles.camera}>{DisplayStrings.NEED_PERMISSION}</Text>;
+  return (
+    <View style={styles.camera}>
+      <Text style={styles.warning}>⚠️</Text>
+      <Text style={styles.permissionText}>{DisplayStrings.NEED_PERMISSION}</Text>
+    </View>
+  );
 })
 
 
@@ -123,20 +128,24 @@ const styles = StyleSheet.create({
     height: CAMERA_WINDOW,
     marginTop: CAMERA_TOP_MARGIN,
     alignSelf: 'center',
-    textAlignVertical: 'center',
+    display: 'flex',
+    flexDirection: 'row',
     color: 'red',
     borderColor: 'white',
     borderWidth: 1,
     borderRadius: 10,
     borderStyle: 'solid',
   },
-  permissionRequest: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: CAMERA_WINDOW,
-    height: CAMERA_WINDOW,
-    marginTop: CAMERA_TOP_MARGIN,
+  warning: {
+    flex: 1,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    fontSize: 24,
+  },
+  permissionText: {
+    textAlignVertical: 'center',
+    opacity: 0.7,
+    flex: 3,
   },
   content: {
     alignSelf: 'center',
