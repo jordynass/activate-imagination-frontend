@@ -3,13 +3,13 @@ import { ScrollView, StyleSheet } from "react-native"
 
 export default function ScreenView({children}: {children: ReactNode}) {
   return (
-  <ScrollView
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="none"
-      contentContainerStyle={styles.scrollViewContent}
-      style={styles.scrollView}>
-    {children}
-  </ScrollView>
+    <ScrollView
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="none"
+        contentContainerStyle={styles.scrollViewContent}
+        style={styles.scrollView}>
+      {children}
+    </ScrollView>
   )
 }
 
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: '2%',
+    gap: 10,
     backgroundColor: 'none',
   },
 });
