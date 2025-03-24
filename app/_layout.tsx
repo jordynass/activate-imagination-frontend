@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { store } from '@/store/store';
 import { Provider as ReduxProvider } from 'react-redux';
 import 'react-native-reanimated';
+import { StatusBar } from 'expo-status-bar';
 
 import { useColorScheme } from '@/hooks/boilerplate/useColorScheme';
 import IOInterfaceProvider from '@/components/IOProvider';
@@ -58,6 +59,7 @@ function RootLayoutNav() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}>
       <ImageBackground style={styles.background} source={require('@/assets/images/old_paper.jpg')}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} translucent backgroundColor="transparent" />
         <PaperProvider theme={paperTheme}>
           <ThemeProvider value={navigationTheme}>
             <ReduxProvider store={store}>
